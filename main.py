@@ -15,14 +15,16 @@ inst_UVR_model_list = ["MDX23C-8KFFT-InstVoc_HQ_2.ckpt",
                        "UVR-BVE-4B_SN-44100-1.pth"
                        ]
 
-
+'''
 converter.convert_mp4_to_wav("./input/mp4", "./save/rawwav")
 converter.convert_ass_to_json(substyle, "./input/ass", "./save/assjson")
 
 
-input_folder = "./save/rawwav"
+#input_folder = "./save/rawwav"
+input_folder = os.path.join("./save/uvrwav/base_uvr", os.path.splitext(base_UVR_model_list[3])[0])
 
-for model in base_UVR_model_list:
+#for model in base_UVR_model_list:
+for model in base_UVR_model_list[4:]:
     folder_name = os.path.splitext(model)[0]
     model_folder_path = os.path.join("./save/uvrwav/base_uvr", folder_name)
 
@@ -32,7 +34,7 @@ for model in base_UVR_model_list:
     if "Echo" in model:
         stem = "No Echo"
     elif "Noise" in model:
-      stem = "Instrumental"
+        stem = "Instrumental"
     else:
         stem = "Vocals"
 
@@ -52,6 +54,10 @@ for item in os.listdir("./save/uvrwav/base_uvr"):
     
     if os.path.isdir(item_path):
         shutil.rmtree(item_path)
+
+'''
+
+input_folder = "./save/uvrwav/base_uvr"
 
 for model in inst_UVR_model_list:
     idx = inst_UVR_model_list.index(model)+1
