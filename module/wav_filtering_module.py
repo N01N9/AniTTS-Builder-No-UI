@@ -134,20 +134,15 @@ def load_json(json_path):
         data = json.load(f)
     return data
 
-def find_and_filtering_files_based_on_json(json_path_list, source_dir):
-
-    json_path_1 = json_path_list[0]
-    json_path_2 = json_path_list[1]
+def find_and_filtering_files_based_on_json(json_path, condition,source_dir):
     
-    data_1 = load_json(json_path_1)
-    data_2 = load_json(json_path_2)
+    data = load_json(json_path)
 
-    for key in data_1.keys():
+    for key in data.keys():
         source_file_path = os.path.join(source_dir, key)
-        value_1 = data_1[key]
-        value_2 = data_2[key]
+        value = data[key]
         if os.path.exists(source_file_path):
-            if value_1[0] <= 1.3 and value_1[1]<=90 and value_2[0]<0.05:
+            if value[0]<condition[0] and value[1]<condition[1]:
                 pass
             else:
                 os.remove(source_file_path)
@@ -156,9 +151,9 @@ def find_and_filtering_files_based_on_json(json_path_list, source_dir):
             pass
 
 
-def spectrogram_json(input_folder, output_folder, output_json_path):
+def spectrogram_json(input_folder, output_folder, output_json_path, source_dir, condition):
 
-    global_min, global_max = compute_global_min_max([os.path.join(input_folder, file) for file in os.listdir(input_folder) if file.endswith('.wav')])
+    global_min, global_max = compute_global_min_max([os.path.join(input_folder, file) for file in os.listdir(source_dir) if file.endswith('.wav')])
     if not global_min:
         global_min = 10**-3
 
@@ -168,9 +163,10 @@ def spectrogram_json(input_folder, output_folder, output_json_path):
     for file_name in os.listdir(input_folder):
         if file_name.endswith('.wav'):
             file_path = os.path.join(input_folder, file_name)
-            print(f"Processing {file_path}")
             spectogram(file_path, output_folder, file_name, global_min, global_max)
 
     process_png_files(output_folder, output_json_path, process_function)
 
     shutil.rmtree(output_folder)
+
+    find_and_filtering_files_based_on_json(output_json_path, condition, source_dir)

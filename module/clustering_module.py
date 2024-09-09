@@ -111,7 +111,6 @@ def clustering(distance_matrix_path, embedding_path, json_path, directory, desti
                 break
             else:
                 centroids = new_centroids
-                print(num)
         
         idx_clusters = []
         for cluster in clusters:
