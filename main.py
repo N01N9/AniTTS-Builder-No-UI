@@ -1,6 +1,7 @@
 from module import converter, UVR_del_bg, wav_slice_module, wav_filtering_module, embedding_module, clustering_module
 import os
 import shutil
+import glob
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -15,16 +16,19 @@ inst_UVR_model_list = ["MDX23C-8KFFT-InstVoc_HQ_2.ckpt",
                        "UVR-BVE-4B_SN-44100-1.pth"
                        ]
 
-'''
+gitkeep_files = glob.glob(os.path.join('.', "**", ".gitkeep"), recursive=True)
+
+for file in gitkeep_files:
+    if os.path.isfile(file):
+        os.remove(file)
+
 converter.convert_mp4_to_wav("./input/mp4", "./save/rawwav")
 converter.convert_ass_to_json(substyle, "./input/ass", "./save/assjson")
 
 
-#input_folder = "./save/rawwav"
-input_folder = os.path.join("./save/uvrwav/base_uvr", os.path.splitext(base_UVR_model_list[3])[0])
+input_folder = "./save/rawwav"
 
-#for model in base_UVR_model_list:
-for model in base_UVR_model_list[4:]:
+for model in base_UVR_model_list:
     folder_name = os.path.splitext(model)[0]
     model_folder_path = os.path.join("./save/uvrwav/base_uvr", folder_name)
 
@@ -55,7 +59,6 @@ for item in os.listdir("./save/uvrwav/base_uvr"):
     if os.path.isdir(item_path):
         shutil.rmtree(item_path)
 
-'''
 
 input_folder = "./save/uvrwav/base_uvr"
 
