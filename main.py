@@ -1,10 +1,17 @@
 from module import converter, UVR_del_bg, wav_slice_module, wav_filtering_module, embedding_module, clustering_module
 import os
 import shutil
+import glob
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 substyle = None
+
+gitkeep_files = glob.glob(os.path.join(".", "**", ".gitkeep"), recursive=True)
+
+for file in gitkeep_files:
+    if os.path.isfile(file):
+        os.remove(file)
 
 base_UVR_model_list = ["MDX23C-8KFFT-InstVoc_HQ_2.ckpt",
                   "model_bs_roformer_ep_317_sdr_12.9755.ckpt"
