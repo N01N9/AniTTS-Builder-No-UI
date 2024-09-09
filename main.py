@@ -5,6 +5,7 @@ import shutil
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 substyle = None
+
 base_UVR_model_list = ["MDX23C-8KFFT-InstVoc_HQ_2.ckpt",
                   "model_bs_roformer_ep_317_sdr_12.9755.ckpt"
                   ]
@@ -69,8 +70,7 @@ for dir in os.listdir("./save/uvrwav/inst_uvr"):
     dir_path = os.path.join("./save/uvrwav/inst_uvr", dir)
     wav_slice_module.find_matching_json(dir_path, "./save/assjson", f"./save/slicewav/{dir}", "./save/info/wav_info.json",'inst')
 
-a = sorted(os.listdir("./save/slicewav"),reverse=True)
-for dir in a:
+for dir in os.listdir("./save/slicewav"):
     if dir == "vocals":
         pass
     else:
@@ -95,3 +95,23 @@ embedding_path = os.path.join("./save/info", "all_embeddings.pt")
 json_path = os.path.join("./save/info", "embedding_map.json")
 clustering_module.clustering(output_pt_path, embedding_path, json_path, "./save/slicewav/vocals", "./output")
 
+for folder_name in os.listdir("./output"):
+    folder_path = os.path.join("./output", folder_name)
+    if os.path.isdir(folder_path):
+        if folder_name.startswith('clustering_'):
+
+            new_name = folder_name.replace('clustering_', 'speaker_')
+
+            old_path = os.path.join("./output", folder_name)
+            new_path = os.path.join("./output", new_name)
+
+            os.rename(old_path, new_path)
+
+            wav_files = [f for f in os.listdir(new_path) if f.endswith('.wav')]
+
+            for idx, wav_file in enumerate(sorted(wav_files), start=1):
+                old_file_path = os.path.join(new_path, wav_file)
+                new_file_name = f"{idx}.wav"
+                new_file_path = os.path.join(new_path, new_file_name)
+                
+                os.rename(old_file_path, new_file_path)
