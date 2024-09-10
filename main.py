@@ -1,6 +1,5 @@
 from module import converter, UVR_del_bg, wav_slice_module, wav_filtering_module, embedding_module, clustering_module
 import os
-import shutil
 import glob
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -22,7 +21,7 @@ inst_UVR_model_list = [("MDX23C-8KFFT-InstVoc_HQ_2.ckpt","Instrumental"),
                   ("model_bs_roformer_ep_317_sdr_12.9755.ckpt","Instrumental"),
                   ("6_HP-Karaoke-UVR.pth","Instrumental"),
                   ("UVR_MDXNET_KARA_2.onnx","Instrumental"),
-                       ("UVR-BVE-4B_SN-44100-1.pth","Vocals")
+                       ("UVR-BVE-4B_SN-44100-2.pth","Vocals")
                        ]
 
 converter.convert_mp4_to_wav("./input/mp4", "./save/rawwav")
