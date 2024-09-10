@@ -4,8 +4,8 @@ import shutil
 import glob
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-substyle = None
+"""
+substyle = "JPN TOP"
 
 gitkeep_files = glob.glob(os.path.join(".", "**", ".gitkeep"), recursive=True)
 
@@ -89,12 +89,7 @@ for dir in os.listdir("./save/slicewav"):
         elif dir == "inst_uvr_2":
             condition = [1.3, 90]
         wav_filtering_module.spectrogram_json(input_path, output_path, output_json_path, './save/slicewav/vocals', condition)
-
-files = os.listdir("./save/info")
-spectrogram_files = sorted([file for file in files if file.startswith("spectrogram") and os.path.isfile(os.path.join("./save/info", file))])
-wav_filtering_module.find_and_filtering_files_based_on_json(spectrogram_files, "./save/slicewav/vocals")
-
-
+"""
 output_pt_path = os.path.join("./save/info", "cosine_distance.pt")
 embedding_module.embeddings("./save/slicewav/vocals","./save/info", output_pt_path)
 
