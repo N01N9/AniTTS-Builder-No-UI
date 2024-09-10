@@ -4,7 +4,7 @@ import shutil
 import glob
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-"""
+
 substyle = "JPN TOP"
 
 gitkeep_files = glob.glob(os.path.join(".", "**", ".gitkeep"), recursive=True)
@@ -13,69 +13,36 @@ for file in gitkeep_files:
     if os.path.isfile(file):
         os.remove(file)
 
-base_UVR_model_list = ["MDX23C-8KFFT-InstVoc_HQ_2.ckpt",
-                  "model_bs_roformer_ep_317_sdr_12.9755.ckpt"
+base_UVR_model_list = [("MDX23C-8KFFT-InstVoc_HQ_2.ckpt","Vocals"),
+                  ("model_bs_roformer_ep_317_sdr_12.9755.ckpt","Vocals"),
+                  ("6_HP-Karaoke-UVR.pth","Vocals"),
+                  ("UVR_MDXNET_KARA_2.onnx","Vocals")
                   ]
-inst_UVR_model_list = ["UVR-BVE-4B_SN-44100-1.pth",
-                       "MDX23C-8KFFT-InstVoc_HQ_2.ckpt"
+inst_UVR_model_list = [("MDX23C-8KFFT-InstVoc_HQ_2.ckpt","Instrumental"),
+                  ("model_bs_roformer_ep_317_sdr_12.9755.ckpt","Instrumental"),
+                  ("6_HP-Karaoke-UVR.pth","Instrumental"),
+                  ("UVR_MDXNET_KARA_2.onnx","Instrumental"),
+                       ("UVR-BVE-4B_SN-44100-1.pth","Vocals")
                        ]
 
 converter.convert_mp4_to_wav("./input/mp4", "./save/rawwav")
 converter.convert_ass_to_json(substyle, "./input/ass", "./save/assjson")
 
-
 input_folder = "./save/rawwav"
+output_dir = "./save/uvrwav/models"
+ensemble_output_dir = "./save/uvrwav/base_uvr"
 
-for model in base_UVR_model_list:
-    folder_name = os.path.splitext(model)[0]
-    model_folder_path = os.path.join("./save/uvrwav/base_uvr", folder_name)
-
-    if not os.path.exists(model_folder_path):
-        os.makedirs(model_folder_path, exist_ok=True)
-
-    stem = "Vocals"
-
-    UVR_del_bg.UVR(model, stem, input_folder, model_folder_path)
+UVR_del_bg.UVR_ensemble(base_UVR_model_list, input_folder, output_dir, ensemble_output_dir)
     
-    input_folder = model_folder_path
-
-for filename in os.listdir(input_folder):
-    src_file_path = os.path.join(input_folder, filename)
-
-    if filename.endswith('.wav'):
-        dst_file_path = os.path.join("./save/uvrwav/base_uvr", filename)
-        shutil.copy2(src_file_path, dst_file_path) 
-
-for item in os.listdir("./save/uvrwav/base_uvr"):
-    item_path = os.path.join("./save/uvrwav/base_uvr", item)
-    
-    if os.path.isdir(item_path):
-        shutil.rmtree(item_path)
-
-
 input_folder = "./save/uvrwav/base_uvr"
+output_dir = "./save/uvrwav/models"
+ensemble_output_dir = "./save/uvrwav/inst_uvr"
 
-for model in inst_UVR_model_list:
-    idx = inst_UVR_model_list.index(model)+1
-    folder_name = f"inst_uvr_{idx}"
-    model_folder_path = os.path.join("./save/uvrwav/inst_uvr", folder_name)
-
-    if not os.path.exists(model_folder_path):
-        os.makedirs(model_folder_path, exist_ok=True)
-
-    if idx == 2:
-        stem = "Instrumental"
-    elif idx == 1:
-        stem = "Vocals"
-
-    UVR_del_bg.UVR(model, stem, input_folder, model_folder_path)
+UVR_del_bg.UVR_ensemble(inst_UVR_model_list, input_folder, output_dir, ensemble_output_dir)
 
 
 wav_slice_module.find_matching_json("./save/uvrwav/base_uvr", "./save/assjson", "./save/slicewav/vocals", "./save/info/wav_info.json",'vocal')
-
-for dir in os.listdir("./save/uvrwav/inst_uvr"):
-    dir_path = os.path.join("./save/uvrwav/inst_uvr", dir)
-    wav_slice_module.find_matching_json(dir_path, "./save/assjson", f"./save/slicewav/{dir}", "./save/info/wav_info.json",'inst')
+wav_slice_module.find_matching_json("./save/uvrwav/inst_uvr", "./save/assjson", f"./save/slicewav/inst", "./save/info/wav_info.json",'inst')
 
 for dir in os.listdir("./save/slicewav"):
     if dir == "vocals":
@@ -84,12 +51,9 @@ for dir in os.listdir("./save/slicewav"):
         input_path = os.path.join("./save/slicewav", dir)
         output_path = os.path.join("./save/spectrogram", dir)
         output_json_path = os.path.join("./save/info", f'spectrogram_{dir}.json')
-        if dir == "inst_uvr_1":
-            condition = [0.05, 10**6]
-        elif dir == "inst_uvr_2":
-            condition = [1.3, 90]
+        condition = [0.05, 10**6]
         wav_filtering_module.spectrogram_json(input_path, output_path, output_json_path, './save/slicewav/vocals', condition)
-"""
+
 output_pt_path = os.path.join("./save/info", "cosine_distance.pt")
 embedding_module.embeddings("./save/slicewav/vocals","./save/info", output_pt_path)
 

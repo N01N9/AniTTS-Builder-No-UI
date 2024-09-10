@@ -72,8 +72,6 @@ def find_matching_json(wav_folder, json_folder, output_folder, infojson_file_pat
                 audio_file_path = os.path.join(wav_folder, wav_file)
                 slice_audio_from_subtitles(audio_file_path, json_file_path, output_folder, file_name_without_ext, infojson_file_path, type)
 
-                os.remove(audio_file_path)
-
             else:
                 print(f"WAV 파일: {os.path.join(wav_folder, wav_file)}")
                 print("매칭되는 JSON 파일 없음\n")
