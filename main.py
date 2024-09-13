@@ -4,7 +4,7 @@ import glob
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-substyle = "JPN TOP"
+substyle = "None"
 
 gitkeep_files = glob.glob(os.path.join(".", "**", ".gitkeep"), recursive=True)
 
