@@ -134,13 +134,22 @@ def load_json(json_path):
         data = json.load(f)
     return data
 
-def find_and_filtering_files_based_on_json(json_path, condition,source_dir):
+def find_and_filtering_files_based_on_json(json_path,source_dir):
     
     data = load_json(json_path)
+
+    values = list(data.values())
+
+    v1 = np.array([v[0] for v in values])
+    v2 = np.array([v[1] for v in values])
+    persent = 25
+
+    condition = [np.percentile(v1, persent), np.percentile(v2, persent)]
 
     for key in data.keys():
         source_file_path = os.path.join(source_dir, key)
         value = data[key]
+
         if os.path.exists(source_file_path):
             if value[0]<condition[0] and value[1]<condition[1]:
                 pass
@@ -151,11 +160,11 @@ def find_and_filtering_files_based_on_json(json_path, condition,source_dir):
             pass
 
 
-def spectrogram_json(input_folder, output_folder, output_json_path, source_dir, condition):
+def spectrogram_json(input_folder, output_folder, output_json_path, source_dir):
 
     global_min, global_max = compute_global_min_max([os.path.join(input_folder, file) for file in os.listdir(source_dir) if file.endswith('.wav')])
     if not global_min:
-        global_min = 10**-3
+        global_min = 10**-8
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -169,4 +178,4 @@ def spectrogram_json(input_folder, output_folder, output_json_path, source_dir, 
 
     shutil.rmtree(output_folder)
 
-    find_and_filtering_files_based_on_json(output_json_path, condition, source_dir)
+    find_and_filtering_files_based_on_json(output_json_path, source_dir)

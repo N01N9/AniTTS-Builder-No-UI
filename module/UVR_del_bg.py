@@ -60,6 +60,14 @@ def UVR_ensemble(base_UVR_model_list, input_dir, output_dir, ensemble_output_dir
             
             # 모델별로 생성된 wav 파일들을 스펙트로그램으로 변환
             spectrograms, sr = load_wav_files(model_outputs)
+
+            max_len = max([spec.shape[1] for spec in spectrograms])
+
+            # 모든 스펙트로그램을 동일한 길이로 패딩
+            padded_spectrograms = [librosa.util.fix_length(spec, size=max_len, axis=1) for spec in spectrograms]
+
+            # numpy 배열로 변환
+            spectrograms = np.array(padded_spectrograms)
             
             # Max Spec Ensemble 수행
             combined_spec = max_spec_ensemble(spectrograms)
