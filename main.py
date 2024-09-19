@@ -66,7 +66,8 @@ for folder_name in os.listdir("./output"):
         if folder_name.startswith('clustering_'):
 
             new_name = folder_name.replace('clustering_', 'speaker_')
-
+            folder_num = folder_name.replace('clustering_', '')
+            
             old_path = os.path.join("./output", folder_name)
             new_path = os.path.join("./output", new_name)
 
@@ -76,7 +77,7 @@ for folder_name in os.listdir("./output"):
 
             for idx, wav_file in enumerate(sorted(wav_files), start=1):
                 old_file_path = os.path.join(new_path, wav_file)
-                new_file_name = f"{idx}.wav"
+                new_file_name = f"{folder_num}dir{idx}file.wav"
                 new_file_path = os.path.join(new_path, new_file_name)
                 
                 os.rename(old_file_path, new_file_path)
